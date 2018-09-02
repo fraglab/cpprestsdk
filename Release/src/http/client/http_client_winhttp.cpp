@@ -1205,7 +1205,7 @@ private:
 
                 if (read == 0)
                 {
-                    p_request_context->report_exception(http_exception(U("Unexpected end of request body stream encountered before Content-Length met.")));
+                    p_request_context->report_exception(http_exception(URI("Unexpected end of request body stream encountered before Content-Length met.")));
                     return;
                 }
 

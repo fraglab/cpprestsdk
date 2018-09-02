@@ -12,6 +12,9 @@
 ****/
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #ifndef _CASA_JSON_H
 #define _CASA_JSON_H
 
@@ -1431,7 +1434,7 @@ public:
             case json::number::type::double_type :
                 return m_value == other.m_value;
             }
-            __assume(0);
+            __cpprest_assume(0);
             // Absence of this return statement provokes a warning from Intel
             // compiler, but its presence results in a warning from MSVC, so
             // we have to resort to conditional compilation to keep both happy.
@@ -1977,3 +1980,5 @@ public:
 }}
 
 #endif
+
+#pragma warning(pop)
