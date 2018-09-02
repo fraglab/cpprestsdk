@@ -80,7 +80,7 @@ typedef std::stringstream stringstream_t;
 #endif // endif _UTF16_STRINGS
 
 #ifndef _TURN_OFF_PLATFORM_STRING
-#define U(x) _XPLATSTR(x)
+#define URI(x) _XPLATSTR(x)
 #endif // !_TURN_OFF_PLATFORM_STRING
 
 }// namespace utility

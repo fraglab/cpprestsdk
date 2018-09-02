@@ -12,6 +12,9 @@
 ****/
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #ifndef _CASA_JSON_H
 #define _CASA_JSON_H
 
@@ -1382,7 +1385,7 @@ public:
             case json::number::type::double_type :
                 return m_value == other.m_value;
             }
-            __assume(0);
+            __cpprest_assume(0);
         }
 
     private:
@@ -1922,3 +1925,5 @@ public:
 }}
 
 #endif
+
+#pragma warning(pop)

@@ -26,6 +26,10 @@
 
 #include <sal.h>
 
+#ifndef __cpprest_assume
+#define __cpprest_assume(x) __assume(x)
+#endif
+
 #else // End settings specific to Windows
 
 // Settings common to all but Windows
@@ -33,7 +37,9 @@
 #define __declspec(x) __attribute__ ((x))
 #define dllimport
 #define novtable /* no novtable equivalent */
-#define __assume(x) do { if (!(x)) __builtin_unreachable(); } while (false)
+#ifndef __cpprest_assume
+#define __cpprest_assume(x) do { if (!(x)) __builtin_unreachable(); } while (false)
+#endif
 #define CASABLANCA_UNREFERENCED_PARAMETER(x) (void)x
 #define CPPREST_NOEXCEPT noexcept
 

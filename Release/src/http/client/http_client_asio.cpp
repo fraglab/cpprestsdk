@@ -520,7 +520,7 @@ public:
                 if (status_code != 200)
                 {
                     utility::stringstream_t err_ss;
-                    err_ss << U("Expected a 200 response from proxy, received: ") << status_code;
+                    err_ss << URI("Expected a 200 response from proxy, received: ") << status_code;
                     m_context->report_error(err_ss.str(), ec, httpclient_errorcode_context::readheader);
                     return;
                 }
@@ -589,7 +589,7 @@ public:
         // There is no support for auto-detection of proxies on non-windows platforms, it must be specified explicitly from the client code.
         if (m_http_client->client_config().proxy().is_specified())
         {
-            proxy_type = m_http_client->base_uri().scheme() == U("https") ? http_proxy_type::ssl_tunnel : http_proxy_type::http;
+            proxy_type = m_http_client->base_uri().scheme() == URI("https") ? http_proxy_type::ssl_tunnel : http_proxy_type::http;
             auto proxy = m_http_client->client_config().proxy();
             auto proxy_uri = proxy.address();
             proxy_port = proxy_uri.port() == -1 ? 8080 : proxy_uri.port();
@@ -1180,7 +1180,7 @@ private:
 
                 if (boost::iequals(name, header_names::transfer_encoding))
                 {
-                    needChunked = boost::iequals(value, U("chunked"));
+                    needChunked = boost::iequals(value, URI("chunked"));
                 }
 
                 if (boost::iequals(name, header_names::connection))
@@ -1189,7 +1189,7 @@ private:
                     // so connection is explicitly closed only if we get "Connection: close".
                     // We don't handle HTTP/1.0 server here. HTTP/1.0 server would need
                     // to respond using 'Connection: Keep-Alive' every time.
-                    m_connection->set_keep_alive(!boost::iequals(value, U("close")));
+                    m_connection->set_keep_alive(!boost::iequals(value, URI("close")));
                 }
 
                 m_response.headers().add(std::move(name), std::move(value));
@@ -1202,7 +1202,7 @@ private:
 
         // note: need to check for 'chunked' here as well, azure storage sends both
         // transfer-encoding:chunked and content-length:0 (although HTTP says not to)
-        if (m_request.method() == U("HEAD") || (!needChunked && m_content_length == 0))
+        if (m_request.method() == URI("HEAD") || (!needChunked && m_content_length == 0))
         {
             // we can stop early - no body
             const auto &progress = m_request._get_impl()->_progress_handler();
