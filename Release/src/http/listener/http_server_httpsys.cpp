@@ -47,59 +47,59 @@ namespace details
 /// </summary>
 static utility::string_t HttpServerAPIKnownHeaders[] =
 {
-    URI("Cache-Control"),
-    URI("Connection"),
-    URI("Data"),
-    URI("Keep-Alive"),
-    URI("Pragma"),
-    URI("Trailer"),
-    URI("Transfer-Encoding"),
-    URI("Upgrade"),
-    URI("Via"),
-    URI("Warning"),
-    URI("Allow"),
-    URI("Content-Length"),
-    URI("Content-Type"),
-    URI("Content-Encoding"),
-    URI("Content-Language"),
-    URI("Content-Location"),
-    URI("Content-Md5"),
-    URI("Content-Range"),
-    URI("Expires"),
-    URI("Last-Modified"),
-    URI("Accept"),
-    URI("Accept-Charset"),
-    URI("Accept-Encoding"),
-    URI("Accept-Language"),
-    URI("Authorization"),
-    URI("Cookie"),
-    URI("Expect"),
-    URI("From"),
-    URI("Host"),
-    URI("If-Match"),
-    URI("If-Modified-Since"),
-    URI("If-None-Match"),
-    URI("If-Range"),
-    URI("If-Unmodified-Since"),
-    URI("Max-Forwards"),
-    URI("Proxy-Authorization"),
-    URI("Referer"),
-    URI("Range"),
-    URI("Te"),
-    URI("Translate"),
-    URI("User-Agent"),
-    URI("Request-Maximum"),
-    URI("Accept-Ranges"),
-    URI("Age"),
-    URI("Etag"),
-    URI("Location"),
-    URI("Proxy-Authenticate"),
-    URI("Retry-After"),
-    URI("Server"),
-    URI("Set-Cookie"),
-    URI("Vary"),
-    URI("Www-Authenticate"),
-    URI("Response-Maximum")
+    U("Cache-Control"),
+    U("Connection"),
+    U("Data"),
+    U("Keep-Alive"),
+    U("Pragma"),
+    U("Trailer"),
+    U("Transfer-Encoding"),
+    U("Upgrade"),
+    U("Via"),
+    U("Warning"),
+    U("Allow"),
+    U("Content-Length"),
+    U("Content-Type"),
+    U("Content-Encoding"),
+    U("Content-Language"),
+    U("Content-Location"),
+    U("Content-Md5"),
+    U("Content-Range"),
+    U("Expires"),
+    U("Last-Modified"),
+    U("Accept"),
+    U("Accept-Charset"),
+    U("Accept-Encoding"),
+    U("Accept-Language"),
+    U("Authorization"),
+    U("Cookie"),
+    U("Expect"),
+    U("From"),
+    U("Host"),
+    U("If-Match"),
+    U("If-Modified-Since"),
+    U("If-None-Match"),
+    U("If-Range"),
+    U("If-Unmodified-Since"),
+    U("Max-Forwards"),
+    U("Proxy-Authorization"),
+    U("Referer"),
+    U("Range"),
+    U("Te"),
+    U("Translate"),
+    U("User-Agent"),
+    U("Request-Maximum"),
+    U("Accept-Ranges"),
+    U("Age"),
+    U("Etag"),
+    U("Location"),
+    U("Proxy-Authenticate"),
+    U("Retry-After"),
+    U("Server"),
+    U("Set-Cookie"),
+    U("Vary"),
+    U("Www-Authenticate"),
+    U("Response-Maximum")
 };
 
 static void char_to_wstring(utf16string &dest, const char * src)
@@ -191,7 +191,7 @@ void parse_http_headers(const HTTP_REQUEST_HEADERS &headers, http::http_headers 
         }
         else
         {
-            msgHeaders[unknown_header_name] = URI("");
+            msgHeaders[unknown_header_name] = U("");
         }
     }
     for(int i = 0; i < HttpHeaderMaximum; ++i)
@@ -243,7 +243,7 @@ pplx::task<void> http_windows_server::register_listener(_In_ web::http::experime
     utility::string_t host_uri = http::uri::decode(u.to_string());
     if(host_uri.back() != URI('/') && u.query().empty() && u.fragment().empty())
     {
-        host_uri.append(URI("/"));
+        host_uri.append(U("/"));
     }
 
     // inside here we check for a few specific error types that know about

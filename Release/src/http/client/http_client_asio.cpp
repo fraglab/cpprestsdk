@@ -1394,7 +1394,7 @@ private:
 
                 if (boost::iequals(name, header_names::transfer_encoding))
                 {
-                    needChunked = boost::iequals(value, URI("chunked"));
+                    needChunked = boost::iequals(value, U("chunked"));
                 }
 
                 if (boost::iequals(name, header_names::connection))
@@ -1403,7 +1403,7 @@ private:
                     // so connection is explicitly closed only if we get "Connection: close".
                     // We don't handle HTTP/1.0 server here. HTTP/1.0 server would need
                     // to respond using 'Connection: Keep-Alive' every time.
-                    m_connection->set_keep_alive(!boost::iequals(value, URI("close")));
+                    m_connection->set_keep_alive(!boost::iequals(value, U("close")));
                 }
 
                 m_response.headers().add(utility::conversions::to_string_t(std::move(name)),
