@@ -40,7 +40,6 @@ namespace Concurrency { namespace streams {
     class basic_rawptr_buffer : public streams::details::streambuf_state_manager<_CharType>
     {
     public:
-        using streams::details::streambuf_state_manager<_CharType>::_putn;
         typedef _CharType char_type;
 
         typedef typename basic_streambuf<_CharType>::traits traits;

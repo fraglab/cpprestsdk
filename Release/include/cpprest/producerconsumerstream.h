@@ -36,7 +36,6 @@ namespace Concurrency { namespace streams {
         class basic_producer_consumer_buffer : public streams::details::streambuf_state_manager<_CharType>
         {
         public:
-            using streams::details::streambuf_state_manager<_CharType>::_putn;
             typedef typename ::concurrency::streams::char_traits<_CharType> traits;
             typedef typename basic_streambuf<_CharType>::int_type int_type;
             typedef typename basic_streambuf<_CharType>::pos_type pos_type;
