@@ -241,7 +241,7 @@ pplx::task<void> http_windows_server::register_listener(_In_ web::http::experime
     // Windows HTTP Server API will not accept a uri with an empty path, it must have a '/'.
     // Windows HTTP Server API will only accept decoded uri strings.
     utility::string_t host_uri = http::uri::decode(u.to_string());
-    if(host_uri.back() != URI('/') && u.query().empty() && u.fragment().empty())
+    if(host_uri.back() != U('/') && u.query().empty() && u.fragment().empty())
     {
         host_uri.append(U("/"));
     }
