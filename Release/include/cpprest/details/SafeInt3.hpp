@@ -641,6 +641,7 @@ namespace safeint3
 
 // If you would like to use your own custom assert
 // Define SAFEINT_ASSERT
+#pragma push_macro("assert") // Enable coexists of CRY_ASSERT and generic one
 #if !defined SAFEINT_ASSERT
 #include <assert.h>
 #define SAFEINT_ASSERT(x) assert(x)
@@ -7042,7 +7043,7 @@ SafeInt< T, E > operator |( U lhs, SafeInt< T, E > rhs ) SAFEINT_NOTHROW
 #if SAFEINT_COMPILER == CLANG_COMPILER
 #pragma clang diagnostic pop
 #endif
-
+#pragma pop_macro("assert") // Enable coexists of CRY_ASSERT and generic one
 } // utilities
 } // safeint3
 
