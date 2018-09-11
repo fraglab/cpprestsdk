@@ -13,6 +13,9 @@
 ****/
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #include <vector>
 #include <queue>
 #include <algorithm>
@@ -618,3 +621,5 @@ namespace Concurrency { namespace streams {
 
 
 }} // namespaces
+
+#pragma warning(pop)

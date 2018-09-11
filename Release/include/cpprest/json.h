@@ -15,6 +15,9 @@
 #ifndef _CASA_JSON_H
 #define _CASA_JSON_H
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #include <memory>
 #include <string>
 #include <sstream>
@@ -1975,5 +1978,7 @@ public:
     /// <returns>The input stream object.</returns>
     _ASYNCRTIMP utility::istream_t& __cdecl operator >> (utility::istream_t &is, json::value &val);
 }}
+
+#pragma warning(pop)
 
 #endif
