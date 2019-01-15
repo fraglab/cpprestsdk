@@ -15,6 +15,9 @@
 #ifndef CASA_JSON_H
 #define CASA_JSON_H
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #include <memory>
 #include <string>
 #include <sstream>
@@ -1435,7 +1438,7 @@ public:
             case json::number::type::double_type :
                 return m_value == other.m_value;
             }
-            __assume(0);
+            __cpprest_assume(0);
             // Absence of this return statement provokes a warning from Intel
             // compiler, but its presence results in a warning from MSVC, so
             // we have to resort to conditional compilation to keep both happy.
@@ -1979,5 +1982,7 @@ public:
     /// <returns>The input stream object.</returns>
     _ASYNCRTIMP utility::istream_t& __cdecl operator >> (utility::istream_t &is, json::value &val);
 }}
+
+#pragma warning(pop)
 
 #endif

@@ -28,11 +28,17 @@
 
 #include <sal.h>
 
+<<<<<<< HEAD
+#else // ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
+=======
 #ifndef __cpprest_assume
 #define __cpprest_assume(x) __assume(x)
 #endif
 
-#else /// ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
+#else // End settings specific to Windows
+
+// Settings common to all but Windows
+>>>>>>> v2.10.6_patched
 
 #define __declspec(x) __attribute__ ((x))
 #define dllimport
