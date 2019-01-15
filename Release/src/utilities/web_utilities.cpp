@@ -102,6 +102,9 @@ win32_encryption::win32_encryption(const std::wstring &data) :
     m_buffer.resize(dataNumBytes);
     memcpy_s(m_buffer.data(), m_buffer.size(), data.c_str(), dataNumBytes);
 
+#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+    #pragma message("win32_encryption not implemented")
+#else
     // Buffer must be a multiple of CRYPTPROTECTMEMORY_BLOCK_SIZE
     const auto mod = m_buffer.size() % CRYPTPROTECTMEMORY_BLOCK_SIZE;
     if (mod != 0)
@@ -112,6 +115,7 @@ win32_encryption::win32_encryption(const std::wstring &data) :
     {
         throw ::utility::details::create_system_error(GetLastError());
     }
+#endif // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 }
 
 win32_encryption::~win32_encryption()
@@ -126,6 +130,9 @@ plaintext_string win32_encryption::decrypt() const
 
     // Copy the buffer and decrypt to avoid having to re-encrypt.
     auto data = plaintext_string(new std::wstring(reinterpret_cast<const std::wstring::value_type *>(m_buffer.data()), m_buffer.size() / 2));
+#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+    #pragma message("decrypt not implemented")
+#else
     if (!CryptUnprotectMemory(
         const_cast<std::wstring::value_type *>(data->c_str()),
         static_cast<DWORD>(m_buffer.size()),
@@ -133,6 +140,7 @@ plaintext_string win32_encryption::decrypt() const
     {
         throw ::utility::details::create_system_error(GetLastError());
     }
+#endif // FL[FD-4905]: SPIKE: compile game01 on Durango platform
     data->resize(m_numCharacters);
     return std::move(data);
 }

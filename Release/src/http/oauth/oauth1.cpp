@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 
-#if !defined(CPPREST_TARGET_XP)
+#if !defined(CPPREST_TARGET_XP) && !defined(ORBIS)
 
 using namespace utility;
 using web::http::client::http_client;
@@ -41,7 +41,8 @@ namespace experimental
 //
 // Start of platform-dependent _hmac_sha1() block...
 //
-#if defined(_WIN32) && !defined(__cplusplus_winrt) // Windows desktop
+// FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(_WIN32) && !defined(__cplusplus_winrt) && !defined(DURANGO) // Windows desktop
 
 #include <winternl.h>
 #include <bcrypt.h>
@@ -125,6 +126,15 @@ std::vector<unsigned char> oauth1_config::_hmac_sha1(const utility::string_t& ke
     Platform::Array<unsigned char, 1>^ arr;
     CryptographicBuffer::CopyToByteArray(signed_buffer, &arr);
     return std::vector<unsigned char>(arr->Data, arr->Data + arr->Length);
+}
+
+// FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#elif defined(DURANGO)
+
+std::vector<unsigned char> oauth1_config::_hmac_sha1(const utility::string_t& key, const utility::string_t& data)
+{
+    #pragma message("_hmac_sha1 not implemented")
+    return std::vector<unsigned char>();
 }
 
 #else // Linux, Mac OS X

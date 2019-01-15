@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <string>
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(ORBIS)
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
@@ -120,7 +120,7 @@ _ASYNCRTIMP void __cdecl inplace_tolower(std::wstring &target) CPPREST_NOEXCEPT
     }
 }
 
-#if !defined(ANDROID) && !defined(__ANDROID__)
+#if !defined(ANDROID) && !defined(__ANDROID__) && !defined(ORBIS)
 std::once_flag g_c_localeFlag;
 std::unique_ptr<scoped_c_thread_locale::xplat_locale, void(*)(scoped_c_thread_locale::xplat_locale *)> g_c_locale(nullptr, [](scoped_c_thread_locale::xplat_locale *){});
 scoped_c_thread_locale::xplat_locale scoped_c_thread_locale::c_locale()
@@ -191,7 +191,7 @@ scoped_c_thread_locale::~scoped_c_thread_locale()
         _configthreadlocale(m_prevThreadSetting);
     }
 }
-#elif (defined(ANDROID) || defined(__ANDROID__))
+#elif (defined(ANDROID) || defined(__ANDROID__) || defined(ORBIS))
 scoped_c_thread_locale::scoped_c_thread_locale() {}
 scoped_c_thread_locale::~scoped_c_thread_locale() {}
 #else
@@ -297,7 +297,7 @@ std::error_condition windows_category_impl::default_error_condition(int errorCod
 
     switch(errorCode)
     {
-#ifndef __cplusplus_winrt
+#if !defined(__cplusplus_winrt) && !defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
     case ERROR_WINHTTP_TIMEOUT:
         return std::errc::timed_out;
     case ERROR_WINHTTP_CANNOT_CONNECT:
@@ -767,7 +767,11 @@ utility::string_t datetime::to_string(date_format format) const
     time_t time = (time_t)input - (time_t)11644473600LL;// diff between windows and unix epochs (seconds)
 
     struct tm datetime;
+#if defined(ORBIS)
+    gmtime_s(&time, &datetime);
+#else
     gmtime_r(&time, &datetime);
+#endif
 
     const int max_dt_length = 64;
     char output[max_dt_length+1] = {0};
@@ -976,6 +980,9 @@ datetime __cdecl datetime::from_string(const utility::string_t& dateString, date
         }
     }
 
+    return datetime();
+#elif defined(ORBIS)
+    // TODO: implement for ORBIS
     return datetime();
 #else
     std::string input(dateString);

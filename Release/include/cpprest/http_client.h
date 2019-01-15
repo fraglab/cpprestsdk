@@ -50,7 +50,9 @@ typedef void* native_handle;}}}
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconversion"
 #endif
+#if !defined(ORBIS)
 #include "boost/asio/ssl.hpp"
+#endif
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -88,7 +90,9 @@ public:
         , m_validate_certificates(true)
 #endif
 #if !defined(_WIN32) && !defined(__cplusplus_winrt) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO)
+#if !defined(ORBIS)
         , m_tlsext_sni_enabled(true)
+#endif
 #endif
 #if defined(_WIN32) && !defined(__cplusplus_winrt)
         , m_buffer_request(false)
@@ -363,6 +367,7 @@ public:
     }
 
 #if !defined(_WIN32) && !defined(__cplusplus_winrt) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO)
+#if !defined(ORBIS)
     /// <summary>
     /// Sets a callback to enable custom setting of the ssl context, at construction time.
     /// </summary>
@@ -399,6 +404,7 @@ public:
         m_tlsext_sni_enabled = tlsext_sni_enabled;
     }
 #endif
+#endif
 
 private:
 #if !defined(CPPREST_TARGET_XP)
@@ -424,8 +430,10 @@ private:
 	std::function<void(native_handle)> m_set_user_nativesessionhandle_options;
 
 #if !defined(_WIN32) && !defined(__cplusplus_winrt) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO)
+#if !defined(ORBIS)
     std::function<void(boost::asio::ssl::context&)> m_ssl_context_callback;
     bool m_tlsext_sni_enabled;
+#endif
 #endif
 #if defined(_WIN32) && !defined(__cplusplus_winrt)
     bool m_buffer_request;

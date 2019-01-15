@@ -438,6 +438,15 @@ bool verify_X509_cert_chain(const std::vector<std::string>& certChain, const std
     return true;
 }
 #endif
+
+// FL[FD-5263]: Implement SSL validation on cert site for game server
+#if defined(__linux__)
+bool verify_X509_cert_chain(const std::vector<std::string>& certChain, const std::string& hostName)
+{
+#pragma message("Not implemented")
+    return true;
+}
+#endif
 }
 }
 }
