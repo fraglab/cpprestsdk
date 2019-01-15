@@ -20,7 +20,11 @@
 
 #ifndef _WIN32
 
+#if defined(ORBIS)
+#include <sys/signal.h>
+#else
 #include <signal.h>
+#endif
 #include "pthread.h"
 #include "cpprest/details/cpprest_compat.h"
 

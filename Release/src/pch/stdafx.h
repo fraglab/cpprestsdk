@@ -35,7 +35,9 @@
     #include <crtdbg.h>
 #endif
 
+#if !defined(WIN32_LEAN_AND_MEAN) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#endif // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #include <windows.h>
 #include <objbase.h>
 
@@ -50,7 +52,11 @@
 #include <cstdint>
 #include <string>
 #include <atomic>
+#if defined(ORBIS)
+#include <sys/signal.h>
+#else
 #include <signal.h>
+#endif
 #include "pthread.h"
 #if (defined(ANDROID) || defined(__ANDROID__)) && !defined(_LIBCPP_VERSION)
 // Boost doesn't recognize libstdcpp on top of clang correctly
@@ -59,6 +65,7 @@
 #undef BOOST_NO_CXX11_SMART_PTR
 #undef BOOST_NO_CXX11_NULLPTR
 #endif
+#if !defined(ORBIS)
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/condition_variable.hpp"
 #include "boost/date_time/posix_time/posix_time_types.hpp"
@@ -67,6 +74,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/syscall.h>
+#endif // !defined(ORBIS)
 #endif // _WIN32
 
 // Macro indicating the C++ Rest SDK product itself is being built.
@@ -110,7 +118,7 @@
 #endif
 #include "cpprest/oauth2.h"
 
-#if !defined(__cplusplus_winrt)
+#if !defined(__cplusplus_winrt) && !defined(ORBIS)
 #if _WIN32_WINNT >= _WIN32_WINNT_VISTA
 #include "cpprest/details/http_server.h"
 #include "cpprest/http_listener.h"
