@@ -106,6 +106,9 @@ win32_encryption::win32_encryption(const std::wstring &data) :
 
     const auto dataSizeDword = static_cast<DWORD>(data.size() * sizeof(wchar_t));
 
+#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#pragma message("win32_encryption not implemented")
+#else
     // Round up dataSizeDword to be a multiple of CRYPTPROTECTMEMORY_BLOCK_SIZE
     static_assert(CRYPTPROTECTMEMORY_BLOCK_SIZE == 16, "Power of 2 assumptions in this bit masking violated");
     const auto mask = static_cast<DWORD>(CRYPTPROTECTMEMORY_BLOCK_SIZE - 1u);
@@ -114,9 +117,6 @@ win32_encryption::win32_encryption(const std::wstring &data) :
     assert(dataNumBytes >= dataSizeDword);
     m_buffer.resize(dataNumBytes);
     memcpy_s(m_buffer.data(), m_buffer.size(), data.c_str(), dataNumBytes);
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
-    #pragma message("win32_encryption not implemented")
-#else
     if (!CryptProtectMemory(m_buffer.data(), dataNumBytes, CRYPTPROTECTMEMORY_SAME_PROCESS))
     {
         throw ::utility::details::create_system_error(GetLastError());
