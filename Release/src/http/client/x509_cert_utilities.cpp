@@ -42,7 +42,7 @@ namespace details
 {
 static bool verify_X509_cert_chain(const std::vector<std::string>& certChain, const std::string& hostName);
 
-bool verify_cert_chain_platform_specific(boost::asio::ssl::verify_context& verifyCtx, const std::string& hostName)
+bool verify_cert_chain_platform_specific(lib::asio::ssl::verify_context& verifyCtx, const std::string& hostName)
 {
     X509_STORE_CTX* storeContext = verifyCtx.native_handle();
     int currentDepth = X509_STORE_CTX_get_error_depth(storeContext);
@@ -90,11 +90,11 @@ bool verify_cert_chain_platform_specific(boost::asio::ssl::verify_context& verif
 
     auto verify_result = verify_X509_cert_chain(certChain, hostName);
 
-    // The Windows Crypto APIs don't do host name checks, use Boost's implementation.
+    // The Windows Crypto APIs don't do host name checks, use ASIO's implementation.
 #if defined(_WIN32)
     if (verify_result)
     {
-        boost::asio::ssl::rfc2818_verification rfc2818(hostName);
+        lib::asio::ssl::rfc2818_verification rfc2818(hostName);
         verify_result = rfc2818(verify_result, verifyCtx);
     }
 #endif
@@ -465,8 +465,6 @@ bool verify_X509_cert_chain(const std::vector<std::string>& certChain, const std
     }
 
     // at first check hostname
-    OpenSSL_add_all_algorithms();
-
     const auto* in = reinterpret_cast<const unsigned char*>(certChain[0].c_str());
     X509* endCert = d2i_X509(nullptr, &in, static_cast<int>(certChain[0].size()));
 

@@ -239,7 +239,7 @@ namespace Concurrency { namespace streams
                         source.release(data, 0);
                     }
 
-                    std::shared_ptr<CharType> buf(new CharType[count], [](CharType *buf) { delete [] buf; });
+                    std::shared_ptr<CharType> buf(new CharType[count], std::default_delete<CharType[]>()); // FL[FD-8704]: Lumberyard 1.19 integration. Linux fix shadow variable
 
                     auto post_write =
                         [buf](pplx::task<size_t> op)-> pplx::task<size_t>
@@ -723,7 +723,7 @@ namespace Concurrency { namespace streams
                         buffer.release(data, 0);
                     }
 
-                    std::shared_ptr<CharType> buf(new CharType[count], [](CharType *buf) { delete [] buf; });
+                    std::shared_ptr<CharType> buf(new CharType[count], std::default_delete<CharType[]>()); // FL[FD-8704]: Lumberyard 1.19 integration. Linux fix shadow variable
 
                     auto post_write =
                         [buf](pplx::task<size_t> op) -> pplx::task<size_t>

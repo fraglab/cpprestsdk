@@ -51,7 +51,7 @@ typedef void* native_handle;}}}
 #pragma clang diagnostic ignored "-Wconversion"
 #endif
 #if !defined(ORBIS)
-#include "boost/asio/ssl.hpp"
+#include "cpprest/details/asio_ssl.h"
 #endif
 #if defined(__clang__)
 #pragma clang diagnostic pop
@@ -348,9 +348,9 @@ public:
     /// The native_handle is the following type depending on the underlying platform:
     ///     Windows Desktop, WinHTTP - HINTERNET
     ///     Windows Runtime, WinRT - IXMLHTTPRequest2 *
-    ///     All other platforms, Boost.Asio:
-    ///         https - boost::asio::ssl::stream<boost::asio::ip::tcp::socket &> *
-    ///         http - boost::asio::ip::tcp::socket *
+    ///     All other platforms, Asio:
+    ///         https - web::lib::asio::ssl::stream<web::lib::asio::ip::tcp::socket &> *
+    ///         http - web::lib::asio::ip::tcp::socket *
     /// </remarks>
     /// <param name="callback">A user callback allowing for customization of the request</param>
     void set_nativehandle_options(const std::function<void(native_handle)> &callback)
@@ -374,7 +374,7 @@ public:
     /// Sets a callback to enable custom setting of the ssl context, at construction time.
     /// </summary>
     /// <param name="callback">A user callback allowing for customization of the ssl context at construction time.</param>
-    void set_ssl_context_callback(const std::function<void(boost::asio::ssl::context&)>& callback)
+    void set_ssl_context_callback(const std::function<void(web::lib::asio::ssl::context&)>& callback)
     {
          m_ssl_context_callback = callback;
     }
@@ -382,7 +382,7 @@ public:
     /// <summary>
     /// Gets the user's callback to allow for customization of the ssl context.
     /// </summary>
-    const std::function<void(boost::asio::ssl::context&)>& get_ssl_context_callback() const
+    const std::function<void(web::lib::asio::ssl::context&)>& get_ssl_context_callback() const
     {
         return m_ssl_context_callback;
     }
@@ -433,7 +433,7 @@ private:
 
 #if !defined(_WIN32) && !defined(__cplusplus_winrt) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO)
 #if !defined(ORBIS)
-    std::function<void(boost::asio::ssl::context&)> m_ssl_context_callback;
+    std::function<void(web::lib::asio::ssl::context&)> m_ssl_context_callback;
     bool m_tlsext_sni_enabled;
 #endif
 #endif

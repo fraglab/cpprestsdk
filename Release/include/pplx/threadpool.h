@@ -17,7 +17,7 @@
 #pragma clang diagnostic ignored "-Wunreachable-code"
 #pragma clang diagnostic ignored "-Winfinite-recursion"
 #endif
-#include "boost/asio.hpp"
+#include "cpprest/details/asio.h"
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -75,12 +75,12 @@ public:
         service().post(task);
     }
 
-    boost::asio::io_service& service() { return m_service; }
+    web::lib::asio::io_service& service() { return m_service; }
 
 protected:
     threadpool(size_t num_threads) : m_service(static_cast<int>(num_threads)) {}
 
-    boost::asio::io_service m_service;
+    web::lib::asio::io_service m_service;
 };
 
 }

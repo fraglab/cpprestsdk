@@ -95,7 +95,7 @@ struct winhttp_cert_chain_context
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
-#include <boost/asio/ssl.hpp>
+#include "cpprest/details/asio_ssl.h"
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -115,10 +115,10 @@ namespace details
 /// Using platform specific APIs verifies server certificate.
 /// Currently implemented to work on Windows, iOS, Android, and OS X.
 /// </summary>
-/// <param name="verifyCtx">Boost.ASIO context to get certificate chain from.</param>
+/// <param name="verifyCtx">ASIO context to get certificate chain from.</param>
 /// <param name="hostName">Host name from the URI.</param>
 /// <returns>True if verification passed and server can be trusted, false otherwise.</returns>
-bool verify_cert_chain_platform_specific(boost::asio::ssl::verify_context& verifyCtx, const std::string& hostName);
+bool verify_cert_chain_platform_specific(lib::asio::ssl::verify_context& verifyCtx, const std::string& hostName);
 }
 }
 }

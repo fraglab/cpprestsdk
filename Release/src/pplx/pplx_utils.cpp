@@ -42,7 +42,7 @@ namespace Concurrency
     }
 }
 
-#elif defined(ORBIS)
+#elif defined(AZ_PLATFORM_PROVO)
 
 // TODO not implemented
 namespace pplx
@@ -58,7 +58,7 @@ namespace pplx
 
 #else
 
-#include <boost/asio/basic_waitable_timer.hpp>
+#include "cpprest/details/asio.h"
 #include "pplx/threadpool.h"
 
 namespace pplx
@@ -67,14 +67,14 @@ namespace pplx
     {
         pplx::task_completion_event<void> tce;
 
-        typedef boost::asio::basic_waitable_timer<std::chrono::steady_clock> steady_timer;
+        using steady_timer = web::lib::asio::basic_waitable_timer<std::chrono::steady_clock>;
 
         auto timer = std::make_shared<steady_timer>(crossplat::threadpool::shared_instance().service());
 
         timer->expires_from_now(std::chrono::duration_cast<steady_timer::duration>(std::chrono::milliseconds(milliseconds)));
-        timer->async_wait([tce](const boost::system::error_code& ec)
+        timer->async_wait([tce](const web::lib::asio::error_code& ec)
         {
-            if (ec == boost::asio::error::operation_aborted)
+            if (ec == web::lib::asio::error::operation_aborted)
             {
                 if (!tce._IsTriggered())
                 {
@@ -93,7 +93,7 @@ namespace pplx
         {
             auto registration = token.register_callback([timer]
             {
-                boost::system::error_code ignored;
+                web::lib::asio::error_code ignored;
                 timer->cancel(ignored);
             });
 

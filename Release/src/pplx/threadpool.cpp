@@ -9,7 +9,8 @@
 #if !defined(CPPREST_EXCLUDE_WEBSOCKETS) || !defined(_WIN32)
 #include "pplx/threadpool.h"
 
-#include <boost/asio/detail/thread.hpp>
+#include "cpprest/details/asio_thread.h"
+
 #include <new>
 #include <vector>
 #include <type_traits>
@@ -77,8 +78,8 @@ struct threadpool_impl final : crossplat::threadpool
 private:
     void add_thread()
     {
-        m_threads.push_back(std::unique_ptr<boost::asio::detail::thread>(
-            new boost::asio::detail::thread([&]{ thread_start(this); })));
+        m_threads.push_back(std::unique_ptr<web::lib::asio::detail::thread>(
+            new web::lib::asio::detail::thread([&]{ thread_start(this); })));
     }
 
 #if defined(__ANDROID__)
@@ -103,8 +104,8 @@ private:
         return arg;
     }
 
-    std::vector<std::unique_ptr<boost::asio::detail::thread>> m_threads;
-    boost::asio::io_service::work m_work;
+    std::vector<std::unique_ptr<web::lib::asio::detail::thread>> m_threads;
+    web::lib::asio::io_service::work m_work;
 };
 
 #if defined(_WIN32)
@@ -126,10 +127,10 @@ struct shared_threadpool
         // if linked into a DLL, the threadpool shared instance will be
         // destroyed at DLL_PROCESS_DETACH, at which stage joining threads
         // causes deadlock, hence this dance
-        bool terminate_threads = boost::asio::detail::thread::terminate_threads();
-        boost::asio::detail::thread::set_terminate_threads(true);
+        bool terminate_threads = web::lib::asio::detail::thread::terminate_threads();
+        web::lib::asio::detail::thread::set_terminate_threads(true);
         get_shared().~threadpool_impl();
-        boost::asio::detail::thread::set_terminate_threads(terminate_threads);
+        web::lib::asio::detail::thread::set_terminate_threads(terminate_threads);
     }
 };
 

@@ -106,8 +106,8 @@ win32_encryption::win32_encryption(const std::wstring &data) :
 
     const auto dataSizeDword = static_cast<DWORD>(data.size() * sizeof(wchar_t));
 
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
-#pragma message("win32_encryption not implemented")
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+    #pragma message("win32_encryption not implemented")
 #else
     // Round up dataSizeDword to be a multiple of CRYPTPROTECTMEMORY_BLOCK_SIZE
     static_assert(CRYPTPROTECTMEMORY_BLOCK_SIZE == 16, "Power of 2 assumptions in this bit masking violated");
@@ -134,7 +134,7 @@ plaintext_string win32_encryption::decrypt() const
     // Copy the buffer and decrypt to avoid having to re-encrypt.
     auto result = plaintext_string(new std::wstring(
         reinterpret_cast<const std::wstring::value_type *>(m_buffer.data()), m_buffer.size() / sizeof(wchar_t)));
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
     #pragma message("decrypt not implemented")
 #else
     auto& data = *result;

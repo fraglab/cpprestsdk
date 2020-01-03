@@ -66,10 +66,6 @@
 #undef BOOST_NO_CXX11_NULLPTR
 #endif
 #if !defined(ORBIS)
-#include "boost/thread/mutex.hpp"
-#include "boost/thread/condition_variable.hpp"
-#include "boost/date_time/posix_time/posix_time_types.hpp"
-#include "boost/bind/bind.hpp"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -95,6 +91,12 @@
 
 #include "pplx/pplxtasks.h"
 #include "cpprest/version.h"
+
+// functional
+#include "cpprest/details/functional.h"
+
+// threads
+#include "cpprest/details/thread.h"
 
 // json
 #include "cpprest/json.h"
