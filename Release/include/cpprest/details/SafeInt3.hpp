@@ -639,6 +639,7 @@ namespace safeint3
 {
 // If you would like to use your own custom assert
 // Define SAFEINT_ASSERT
+#pragma push_macro("assert") // Enable coexists of CRY_ASSERT and generic one
 #if !defined SAFEINT_ASSERT
 #include <assert.h>
 #define SAFEINT_ASSERT(x) assert(x)

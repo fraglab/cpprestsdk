@@ -422,7 +422,7 @@ bool json::value::operator==(const json::value& other) const
             return static_cast<const json::details::_Array*>(this->m_value.get())
                 ->is_equal(static_cast<const json::details::_Array*>(other.m_value.get()));
     }
-    __assume(0);
+    __cpprest_assume(0);
 }
 
 void web::json::value::erase(size_t index) { return this->as_array().erase(index); }

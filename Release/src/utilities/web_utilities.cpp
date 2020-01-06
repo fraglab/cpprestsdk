@@ -105,6 +105,9 @@ win32_encryption::win32_encryption(const std::wstring& data) : m_numCharacters(d
 
     const auto dataSizeDword = static_cast<DWORD>(data.size() * sizeof(wchar_t));
 
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+    #pragma message("win32_encryption not implemented")
+#else
     // Round up dataSizeDword to be a multiple of CRYPTPROTECTMEMORY_BLOCK_SIZE
     static_assert(CRYPTPROTECTMEMORY_BLOCK_SIZE == 16, "Power of 2 assumptions in this bit masking violated");
     const auto mask = static_cast<DWORD>(CRYPTPROTECTMEMORY_BLOCK_SIZE - 1u);
@@ -117,6 +120,7 @@ win32_encryption::win32_encryption(const std::wstring& data) : m_numCharacters(d
     {
         throw ::utility::details::create_system_error(GetLastError());
     }
+#endif // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 }
 
 win32_encryption::~win32_encryption() { SecureZeroMemory(m_buffer.data(), m_buffer.size()); }
@@ -138,7 +142,6 @@ plaintext_string win32_encryption::decrypt() const
         SecureZeroMemory(&data[m_numCharacters], data.size() - m_numCharacters);
         data.erase(m_numCharacters);
     }
-
     return result;
 }
 #endif

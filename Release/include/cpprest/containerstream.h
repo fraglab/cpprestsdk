@@ -13,6 +13,9 @@
  ****/
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #include "cpprest/astreambuf.h"
 #include "cpprest/streams.h"
 #include "pplx/pplxtasks.h"
@@ -588,3 +591,5 @@ public:
 
 } // namespace streams
 } // namespace Concurrency
+
+#pragma warning(pop)

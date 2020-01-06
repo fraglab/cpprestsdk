@@ -15,6 +15,9 @@
 #ifndef CASA_JSON_H
 #define CASA_JSON_H
 
+#pragma warning(push)
+#pragma warning(disable: 4266)
+
 #include "cpprest/asyncrt_utils.h"
 #include "cpprest/details/basic_types.h"
 #include <cstdint>
@@ -1782,5 +1785,7 @@ _ASYNCRTIMP utility::ostream_t& __cdecl operator<<(utility::ostream_t& os, const
 _ASYNCRTIMP utility::istream_t& __cdecl operator>>(utility::istream_t& is, json::value& val);
 } // namespace json
 } // namespace web
+
+#pragma warning(pop)
 
 #endif

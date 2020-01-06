@@ -18,13 +18,14 @@
 #include <sstream>
 #include <string>
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(AZ_PLATFORM_PROVO)
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
+
+#include "cpprest/details/thread.h"
+
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -116,7 +117,7 @@ _ASYNCRTIMP void __cdecl inplace_tolower(std::wstring& target) CPPREST_NOEXCEPT
     }
 }
 
-#if !defined(ANDROID) && !defined(__ANDROID__)
+#if !defined(ANDROID) && !defined(__ANDROID__) && !defined(AZ_PLATFORM_PROVO)
 std::once_flag g_c_localeFlag;
 std::unique_ptr<scoped_c_thread_locale::xplat_locale, void (*)(scoped_c_thread_locale::xplat_locale*)> g_c_locale(
     nullptr, [](scoped_c_thread_locale::xplat_locale*) {});
@@ -187,7 +188,7 @@ scoped_c_thread_locale::~scoped_c_thread_locale()
         _configthreadlocale(m_prevThreadSetting);
     }
 }
-#elif (defined(ANDROID) || defined(__ANDROID__))
+#elif (defined(ANDROID) || defined(__ANDROID__) || defined(AZ_PLATFORM_PROVO))
 scoped_c_thread_locale::scoped_c_thread_locale() {}
 scoped_c_thread_locale::~scoped_c_thread_locale() {}
 #else
@@ -797,7 +798,11 @@ utility::string_t datetime::to_string(date_format format) const
     time_t time = (time_t)input - (time_t)11644473600LL; // diff between windows and unix epochs (seconds)
 
     struct tm datetime;
+#if defined(AZ_PLATFORM_PROVO)
+    gmtime_s(&time, &datetime);
+#else
     gmtime_r(&time, &datetime);
+#endif
 
     const int max_dt_length = 64;
     char output[max_dt_length + 1] = {0};
@@ -1008,6 +1013,9 @@ datetime __cdecl datetime::from_string(const utility::string_t& dateString, date
         }
     }
 
+    return datetime();
+#elif defined(AZ_PLATFORM_PROVO)
+    // TODO: implement for ORBIS
     return datetime();
 #else
     std::string input(dateString);

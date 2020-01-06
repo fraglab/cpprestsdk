@@ -28,7 +28,11 @@
 
 #include <sal.h>
 
-#else // ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
+#ifndef __cpprest_assume
+#define __cpprest_assume(x) __assume(x)
+#endif
+
+#else /// ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
 
 #define __declspec(x) __attribute__((x))
 #define dllimport
