@@ -26,7 +26,7 @@
 
 #include <sal.h>
 
-#else // ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
+#else /// ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
 
 #define __declspec(x) __attribute__((x))
 #define dllimport

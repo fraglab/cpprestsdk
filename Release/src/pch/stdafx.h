@@ -57,9 +57,6 @@
 #undef BOOST_NO_CXX11_SMART_PTR
 #undef BOOST_NO_CXX11_NULLPTR
 #endif
-#include "boost/bind/bind.hpp"
-#include "boost/thread/condition_variable.hpp"
-#include "boost/thread/mutex.hpp"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
@@ -84,6 +81,12 @@
 #include <stdlib.h>
 #include <vector>
 
+// functional
+#include "cpprest/details/functional.h"
+
+// threads
+#include "cpprest/details/thread.h"
+
 // json
 #include "cpprest/json.h"
 
@@ -106,7 +109,7 @@
 #endif
 #include "cpprest/oauth2.h"
 
-#if !defined(__cplusplus_winrt)
+#if !defined(__cplusplus_winrt) && !defined(ORBIS)
 #if _WIN32_WINNT >= _WIN32_WINNT_VISTA
 #include "cpprest/details/http_server.h"
 #include "cpprest/details/http_server_api.h"

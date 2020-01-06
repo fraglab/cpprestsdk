@@ -105,7 +105,7 @@ _ASYNCRTIMP void __cdecl inplace_tolower(std::wstring& target) CPPREST_NOEXCEPT
     }
 }
 
-#if !defined(ANDROID) && !defined(__ANDROID__)
+#if !defined(ANDROID) && !defined(__ANDROID__) && !defined(AZ_PLATFORM_PROVO)
 std::once_flag g_c_localeFlag;
 std::unique_ptr<scoped_c_thread_locale::xplat_locale, void (*)(scoped_c_thread_locale::xplat_locale*)> g_c_locale(
     nullptr, [](scoped_c_thread_locale::xplat_locale*) {});
@@ -176,7 +176,7 @@ scoped_c_thread_locale::~scoped_c_thread_locale()
         _configthreadlocale(m_prevThreadSetting);
     }
 }
-#elif (defined(ANDROID) || defined(__ANDROID__))
+#elif (defined(ANDROID) || defined(__ANDROID__) || defined(AZ_PLATFORM_PROVO))
 scoped_c_thread_locale::scoped_c_thread_locale() {}
 scoped_c_thread_locale::~scoped_c_thread_locale() {}
 #else

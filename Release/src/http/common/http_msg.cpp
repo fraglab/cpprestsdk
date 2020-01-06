@@ -212,39 +212,39 @@ void http_headers::set_content_length(utility::size64_t length)
 
 namespace details
 {
-utility::string_t flatten_http_headers(const http_headers& headers)
-{
-    utility::string_t flattened_headers;
-    for (auto iter = headers.begin(); iter != headers.end(); ++iter)
+    utility::string_t flatten_http_headers(const http_headers& headers)
     {
-        flattened_headers.append(iter->first);
-        flattened_headers.push_back(':');
-        flattened_headers.append(iter->second);
-        flattened_headers.append(CRLF);
+        utility::string_t flattened_headers;
+        for (auto iter = headers.begin(); iter != headers.end(); ++iter)
+        {
+            flattened_headers.append(iter->first);
+            flattened_headers.push_back(':');
+            flattened_headers.append(iter->second);
+            flattened_headers.append(CRLF);
+        }
+        return flattened_headers;
     }
-    return flattened_headers;
-}
 
 #if defined(_WIN32)
-void parse_headers_string(_Inout_z_ utf16char* headersStr, http_headers& headers)
-{
-    utf16char* context = nullptr;
-    utf16char* line = wcstok_s(headersStr, CRLF, &context);
-    while (line != nullptr)
+    void parse_headers_string(_Inout_z_ utf16char* headersStr, http_headers& headers)
     {
-        const utility::string_t header_line(line);
-        const size_t colonIndex = header_line.find_first_of(_XPLATSTR(":"));
-        if (colonIndex != utility::string_t::npos)
+        utf16char* context = nullptr;
+        utf16char* line = wcstok_s(headersStr, CRLF, &context);
+        while (line != nullptr)
         {
-            utility::string_t key = header_line.substr(0, colonIndex);
-            utility::string_t value = header_line.substr(colonIndex + 1, header_line.length() - colonIndex - 1);
-            http::details::trim_whitespace(key);
-            http::details::trim_whitespace(value);
-            headers.add(key, value);
+            const utility::string_t header_line(line);
+            const size_t colonIndex = header_line.find_first_of(_XPLATSTR(":"));
+            if (colonIndex != utility::string_t::npos)
+            {
+                utility::string_t key = header_line.substr(0, colonIndex);
+                utility::string_t value = header_line.substr(colonIndex + 1, header_line.length() - colonIndex - 1);
+                http::details::trim_whitespace(key);
+                http::details::trim_whitespace(value);
+                headers.add(key, value);
+            }
+            line = wcstok_s(nullptr, CRLF, &context);
         }
-        line = wcstok_s(nullptr, CRLF, &context);
     }
-}
 #endif
 
 } // namespace details
@@ -266,9 +266,9 @@ http_version __cdecl http_version::from_string(const std::string& http_version_s
     // check no failure, fully consumed, and correct fixed text
     if (!str.fail() && str.eof() && "HTTP" == http && '.' == dot)
     {
-        return {(uint8_t)major, (uint8_t)minor};
+        return { (uint8_t)major, (uint8_t)minor };
     }
-    return {0, 0};
+    return { 0, 0 };
 }
 
 std::string http_version::to_utf8string() const
@@ -283,9 +283,9 @@ std::string http_version::to_utf8string() const
 }
 
 static const utility::char_t* stream_was_set_explicitly =
-    _XPLATSTR("A stream was set on the message and extraction is not possible");
+_XPLATSTR("A stream was set on the message and extraction is not possible");
 static const utility::char_t* unsupported_charset =
-    _XPLATSTR("Charset must be iso-8859-1, utf-8, utf-16, utf-16le, or utf-16be to be extracted.");
+_XPLATSTR("Charset must be iso-8859-1, utf-8, utf-16, utf-16le, or utf-16be to be extracted.");
 
 http_msg_base::http_msg_base() : m_http_version(http::http_version {0, 0}), m_headers(), m_default_outstream(false) {}
 
@@ -460,9 +460,9 @@ void http_msg_base::_complete(utility::size64_t body_size, const std::exception_
                     catch (...)
                     {
                     }
-                });
+                    });
             }
-        });
+            });
     }
     else
     {
@@ -484,14 +484,14 @@ void http_msg_base::_complete(utility::size64_t body_size, const std::exception_
                 catch (...)
                 {
                 }
+                });
             });
-        });
     }
 }
 
 static bool is_content_type_one_of(const utility::string_t* first,
-                                   const utility::string_t* last,
-                                   const utility::string_t& value)
+    const utility::string_t* last,
+    const utility::string_t& value)
 {
     while (first != last)
     {
@@ -507,12 +507,12 @@ static bool is_content_type_one_of(const utility::string_t* first,
 // Remove once VS 2013 is no longer supported.
 #if defined(_WIN32) && _MSC_VER < 1900
 // Not referring to mime_types to avoid static initialization order fiasco.
-static const utility::string_t textual_types[] = {U("message/http"),
+static const utility::string_t textual_types[] = { U("message/http"),
                                                   U("application/json"),
                                                   U("application/xml"),
                                                   U("application/atom+xml"),
                                                   U("application/http"),
-                                                  U("application/x-www-form-urlencoded")};
+                                                  U("application/x-www-form-urlencoded") };
 #endif
 
 /// <summary>
@@ -521,12 +521,12 @@ static const utility::string_t textual_types[] = {U("message/http"),
 static bool is_content_type_textual(const utility::string_t& content_type)
 {
 #if !defined(_WIN32) || _MSC_VER >= 1900
-    static const utility::string_t textual_types[] = {mime_types::message_http,
+    static const utility::string_t textual_types[] = { mime_types::message_http,
                                                       mime_types::application_json,
                                                       mime_types::application_xml,
                                                       mime_types::application_atom_xml,
                                                       mime_types::application_http,
-                                                      mime_types::application_x_www_form_urlencoded};
+                                                      mime_types::application_x_www_form_urlencoded };
 #endif
 
     if (content_type.size() >= 4 && utility::details::str_iequal(content_type.substr(0, 4), _XPLATSTR("text")))
@@ -539,14 +539,14 @@ static bool is_content_type_textual(const utility::string_t& content_type)
 // Remove once VS 2013 is no longer supported.
 #if defined(_WIN32) && _MSC_VER < 1900
 // Not referring to mime_types to avoid static initialization order fiasco.
-static const utility::string_t json_types[] = {U("application/json"),
+static const utility::string_t json_types[] = { U("application/json"),
                                                U("application/x-json"),
                                                U("text/json"),
                                                U("text/x-json"),
                                                U("text/javascript"),
                                                U("text/x-javascript"),
                                                U("application/javascript"),
-                                               U("application/x-javascript")};
+                                               U("application/x-javascript") };
 #endif
 
 /// <summary>
@@ -555,14 +555,14 @@ static const utility::string_t json_types[] = {U("application/json"),
 static bool is_content_type_json(const utility::string_t& content_type)
 {
 #if !defined(_WIN32) || _MSC_VER >= 1900
-    static const utility::string_t json_types[] = {mime_types::application_json,
+    static const utility::string_t json_types[] = { mime_types::application_json,
                                                    mime_types::application_xjson,
                                                    mime_types::text_json,
                                                    mime_types::text_xjson,
                                                    mime_types::text_javascript,
                                                    mime_types::text_xjavascript,
                                                    mime_types::application_javascript,
-                                                   mime_types::application_xjavascript};
+                                                   mime_types::application_xjavascript };
 #endif
 
     return (is_content_type_one_of(std::begin(json_types), std::end(json_types), content_type));
@@ -590,8 +590,8 @@ static utility::string_t get_default_charset(const utility::string_t& content_ty
 /// If the charset isn't specified the default charset for the content type will be set.
 /// </summary>
 static void parse_content_type_and_charset(const utility::string_t& content_type,
-                                           utility::string_t& content,
-                                           utility::string_t& charset)
+    utility::string_t& content,
+    utility::string_t& charset)
 {
     const size_t semi_colon_index = content_type.find_first_of(_XPLATSTR(";"));
 
@@ -705,7 +705,7 @@ utf8string details::http_msg_base::extract_utf8string(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16_to_utf8(std::move(body));
     }
 
@@ -715,7 +715,7 @@ utf8string details::http_msg_base::extract_utf8string(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return utility::conversions::utf16_to_utf8(std::move(body));
     }
 
@@ -725,7 +725,7 @@ utf8string details::http_msg_base::extract_utf8string(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16be_to_utf8(std::move(body), false);
     }
 
@@ -750,14 +750,14 @@ utf16string details::http_msg_base::extract_utf16string(bool ignore_content_type
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return body;
     }
 
     // utf-8, ascii
     else if (utility::details::str_iequal(charset, charset_types::utf8) ||
-             utility::details::str_iequal(charset, charset_types::usascii) ||
-             utility::details::str_iequal(charset, charset_types::ascii))
+        utility::details::str_iequal(charset, charset_types::usascii) ||
+        utility::details::str_iequal(charset, charset_types::ascii))
     {
         std::string body;
         body.resize((std::string::size_type)buf_r.in_avail());
@@ -782,7 +782,7 @@ utf16string details::http_msg_base::extract_utf16string(bool ignore_content_type
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16_to_utf16(std::move(body));
     }
 
@@ -792,7 +792,7 @@ utf16string details::http_msg_base::extract_utf16string(bool ignore_content_type
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16be_to_utf16le(std::move(body), false);
     }
 
@@ -849,7 +849,7 @@ utility::string_t details::http_msg_base::extract_string(bool ignore_content_typ
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16_to_string_t(std::move(body));
     }
 
@@ -859,7 +859,7 @@ utility::string_t details::http_msg_base::extract_string(bool ignore_content_typ
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16le_to_string_t(std::move(body), false);
     }
 
@@ -869,7 +869,7 @@ utility::string_t details::http_msg_base::extract_string(bool ignore_content_typ
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return convert_utf16be_to_string_t(std::move(body), false);
     }
 
@@ -901,8 +901,8 @@ json::value details::http_msg_base::_extract_json(bool ignore_content_type)
 
     // utf-8, usascii and ascii
     else if (utility::details::str_iequal(charset, charset_types::utf8) ||
-             utility::details::str_iequal(charset, charset_types::usascii) ||
-             utility::details::str_iequal(charset, charset_types::ascii))
+        utility::details::str_iequal(charset, charset_types::usascii) ||
+        utility::details::str_iequal(charset, charset_types::ascii))
     {
         std::string body;
         body.resize(buf_r.in_avail());
@@ -917,7 +917,7 @@ json::value details::http_msg_base::_extract_json(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return json::value::parse(convert_utf16_to_string_t(std::move(body)));
     }
 
@@ -927,7 +927,7 @@ json::value details::http_msg_base::_extract_json(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return json::value::parse(convert_utf16le_to_string_t(std::move(body), false));
     }
 
@@ -937,7 +937,7 @@ json::value details::http_msg_base::_extract_json(bool ignore_content_type)
         utf16string body;
         body.resize(buf_r.in_avail() / sizeof(utf16string::value_type));
         buf_r.getn(const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(body.data())),
-                   body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
+            body.size() * sizeof(utf16string::value_type)); // There is no risk of blocking.
         return json::value::parse(convert_utf16be_to_string_t(std::move(body), false));
     }
 
@@ -966,7 +966,7 @@ std::vector<uint8_t> details::http_msg_base::_extract_vector()
 
 // Helper function to convert message body without extracting.
 static utility::string_t convert_body_to_string_t(const utility::string_t& content_type,
-                                                  concurrency::streams::istream instream)
+    concurrency::streams::istream instream)
 {
     if (!instream)
     {
@@ -1047,7 +1047,7 @@ static utility::string_t convert_body_to_string_t(const utility::string_t& conte
 // Helper function to generate a wstring from given http_headers and message body.
 //
 static utility::string_t http_headers_body_to_string(const http_headers& headers,
-                                                     concurrency::streams::istream instream)
+    concurrency::streams::istream instream)
 {
     utility::string_t result;
     for (const auto& header : headers)
@@ -1087,9 +1087,9 @@ void details::http_msg_base::set_body(const streams::istream& instream, const ut
 {
     set_content_type_if_not_present(headers(),
 #ifdef _UTF16_STRINGS
-                                    utility::conversions::utf8_to_utf16(contentType));
+        utility::conversions::utf8_to_utf16(contentType));
 #else
-                                    contentType);
+        contentType);
 #endif
     set_instream(instream);
 }
@@ -1098,16 +1098,16 @@ void details::http_msg_base::set_body(const streams::istream& instream, const ut
 {
     set_content_type_if_not_present(headers(),
 #ifdef _UTF16_STRINGS
-                                    contentType);
+        contentType);
 #else
-                                    utility::conversions::utf16_to_utf8(contentType));
+        utility::conversions::utf16_to_utf8(contentType));
 #endif
     set_instream(instream);
 }
 
 void details::http_msg_base::set_body(const streams::istream& instream,
-                                      utility::size64_t contentLength,
-                                      const utf8string& contentType)
+    utility::size64_t contentLength,
+    const utf8string& contentType)
 {
     headers().set_content_length(contentLength);
     set_body(instream, contentType);
@@ -1115,8 +1115,8 @@ void details::http_msg_base::set_body(const streams::istream& instream,
 }
 
 void details::http_msg_base::set_body(const concurrency::streams::istream& instream,
-                                      utility::size64_t contentLength,
-                                      const utf16string& contentType)
+    utility::size64_t contentLength,
+    const utf16string& contentType)
 {
     headers().set_content_length(contentLength);
     set_body(instream, contentType);
@@ -1147,9 +1147,9 @@ void http_request::set_decompress_factories()
     return _m_impl->set_decompress_factories(compression::details::builtin::get_decompress_factories());
 }
 
-const http_version http_versions::HTTP_0_9 = {0, 9};
-const http_version http_versions::HTTP_1_0 = {1, 0};
-const http_version http_versions::HTTP_1_1 = {1, 1};
+const http_version http_versions::HTTP_0_9 = { 0, 9 };
+const http_version http_versions::HTTP_1_0 = { 1, 0 };
+const http_version http_versions::HTTP_1_1 = { 1, 1 };
 
 #define _METHODS
 #define DAT(a, b) const method methods::a = b;
