@@ -1433,7 +1433,7 @@ private:
                     if (m_response._get_impl()->http_version() != web::http::http_versions::HTTP_1_0)
                         m_connection->set_keep_alive(!lib::iequals(value, U("close")));
                     else
-                        m_connection->set_keep_alive(boost::iequals(value, U("Keep-Alive")));
+                        m_connection->set_keep_alive(lib::iequals(value, U("Keep-Alive")));
                 }
 
                 m_response.headers().add(utility::conversions::to_string_t(std::move(name)),

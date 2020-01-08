@@ -15,7 +15,7 @@
 
 #include "cpprest/asyncrt_utils.h"
 
-#if _WIN32_WINNT >= _WIN32_WINNT_VISTA
+#if _WIN32_WINNT >= _WIN32_WINNT_VISTA && !defined(AZ_PLATFORM_PROVO)
 
 using namespace utility;
 using web::http::client::http_client;

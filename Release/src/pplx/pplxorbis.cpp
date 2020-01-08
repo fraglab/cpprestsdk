@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-#if defined(ORBIS)
+#if defined(AZ_PLATFORM_PROVO)
 
 #include <pplx/pplxlinux.h>
+#include <pplx/pplxinterface.h>
 
 __uint64_t GetCurrentThreadId();
 
@@ -20,11 +21,14 @@ namespace pplx
             void YieldExecution()
             {
             }
-
         }
 
-        _PPLXIMP void linux_scheduler::schedule(TaskProc_t proc, _In_ void* param) {};
+        _PPLXIMP void linux_scheduler::schedule(TaskProc_t proc, _In_ void* param) {}
+    }
 
+    _PPLXIMP std::shared_ptr<scheduler_interface> _pplx_cdecl get_ambient_scheduler()
+    {
+        return nullptr;
     }
 }
 

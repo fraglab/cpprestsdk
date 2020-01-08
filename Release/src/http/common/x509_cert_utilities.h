@@ -26,7 +26,7 @@ namespace details
 {
 struct winhttp_cert_context
 {
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #pragma message("winhttp_cert_context not implemented")
 #else
     PCCERT_CONTEXT raw;
@@ -36,7 +36,7 @@ struct winhttp_cert_context
     winhttp_cert_context& operator=(const winhttp_cert_context&) = delete;
     ~winhttp_cert_context()
     {
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #pragma message("winhttp_cert_context not implemented")
 #else
         // https://docs.microsoft.com/en-us/windows/desktop/api/wincrypt/nf-wincrypt-certfreecertificatecontext
@@ -51,7 +51,7 @@ struct winhttp_cert_context
 
 struct winhttp_cert_chain_context
 {
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #pragma message("winhttp_cert_chain_context not implemented")
 #else
     PCCERT_CHAIN_CONTEXT raw;
@@ -61,7 +61,7 @@ struct winhttp_cert_chain_context
     winhttp_cert_chain_context& operator=(const winhttp_cert_chain_context&) = delete;
     ~winhttp_cert_chain_context()
     {
-#if defined(DURANGO) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
 #pragma message("winhttp_cert_chain_context not implemented")
 #else
         if (raw)

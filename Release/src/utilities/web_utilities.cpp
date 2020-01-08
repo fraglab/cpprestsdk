@@ -131,6 +131,9 @@ plaintext_string win32_encryption::decrypt() const
     // Copy the buffer and decrypt to avoid having to re-encrypt.
     auto result = plaintext_string(new std::wstring(reinterpret_cast<const std::wstring::value_type*>(m_buffer.data()),
                                                     m_buffer.size() / sizeof(wchar_t)));
+#if defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
+#pragma message("decrypt not implemented")
+#else
     auto& data = *result;
     if (!m_buffer.empty())
     {
@@ -143,6 +146,7 @@ plaintext_string win32_encryption::decrypt() const
         SecureZeroMemory(&data[m_numCharacters], data.size() - m_numCharacters);
         data.erase(m_numCharacters);
     }
+#endif
     return result;
 }
 #endif // __cplusplus_winrt

@@ -949,7 +949,15 @@ public:
             // If you are trapped here, it means an exception thrown in task chain didn't get handled.
             // Please add task-based continuation to handle all exceptions coming from tasks.
             // this->_M_stackTrace keeps the creation callstack of the task generates this exception.
+#if defined(AZ_PLATFORM_PROVO)
+            do
+            {
+                // _debugbreak() do not work for ORBIS here
+                std::terminate();
+            } while (false);
+#else
             _REPORT_PPLTASK_UNOBSERVED_EXCEPTION();
+#endif
         }
     }
 

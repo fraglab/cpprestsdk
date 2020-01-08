@@ -26,12 +26,17 @@
 
 #include <sal.h>
 
-#else /// ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
+// define custom cpprest assume to avoid conflicts with CryEngine assume used for Linux DS
+#ifndef __cpprest_assume
+#define __cpprest_assume(x) __assume(x)
+#endif
+
+#else // ^^^ _WIN32 ^^^ // vvv !_WIN32 vvv
 
 #define __declspec(x) __attribute__((x))
 #define dllimport
 #define novtable /* no novtable equivalent */
-#define __assume(x)                                                                                                    \
+#define __cpprest_assume(x)                                                                                            \
     do                                                                                                                 \
     {                                                                                                                  \
         if (!(x)) __builtin_unreachable();                                                                             \

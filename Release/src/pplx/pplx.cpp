@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 
-#if !defined(AZ_PLATFORM_PS4)
+#if !defined(AZ_PLATFORM_PROVO)
 
 #if !defined(_WIN32) || CPPREST_FORCE_PPLX
 #include "pplx/pplx.h"

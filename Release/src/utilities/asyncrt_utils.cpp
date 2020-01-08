@@ -274,7 +274,7 @@ std::error_condition windows_category_impl::default_error_condition(int errorCod
 
     switch (errorCode)
     {
-#ifndef __cplusplus_winrt
+#if !defined(__cplusplus_winrt) && !defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
         case ERROR_WINHTTP_TIMEOUT: return std::errc::timed_out;
         case ERROR_WINHTTP_CANNOT_CONNECT: return std::errc::host_unreachable;
         case ERROR_WINHTTP_CONNECTION_ERROR: return std::errc::connection_aborted;

@@ -143,7 +143,7 @@ std::string convert_utf16_to_utf8(utf16string src)
             // unknown defaults to big endian.
             return convert_utf16be_to_utf8(std::move(src), false);
     }
-    __assume(0);
+    __cpprest_assume(0);
 }
 
 utf16string convert_utf16_to_utf16(utf16string src)
@@ -157,7 +157,7 @@ utf16string convert_utf16_to_utf16(utf16string src)
             // unknown defaults to big endian.
             return convert_utf16be_to_utf16le(std::move(src), false);
     }
-    __assume(0);
+    __cpprest_assume(0);
 }
 utility::string_t convert_utf16_to_string_t(utf16string src)
 {

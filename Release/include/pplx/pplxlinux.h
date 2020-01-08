@@ -21,7 +21,11 @@
 
 #include "cpprest/details/cpprest_compat.h"
 #include "pthread.h"
+#if defined(AZ_PLATFORM_PROVO)
+#include <sys/signal.h>
+#else
 #include <signal.h>
+#endif
 
 #if defined(__APPLE__)
 #include <boost/thread/condition_variable.hpp>

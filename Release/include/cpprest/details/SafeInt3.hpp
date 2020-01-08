@@ -639,7 +639,7 @@ namespace safeint3
 {
 // If you would like to use your own custom assert
 // Define SAFEINT_ASSERT
-#pragma push_macro("assert") // Enable coexists of CRY_ASSERT and generic one
+#pragma push_macro("assert") // Enable coexists of CRY_ASSERT and generic one. Required for DS debug build
 #if !defined SAFEINT_ASSERT
 #include <assert.h>
 #define SAFEINT_ASSERT(x) assert(x)
@@ -7478,6 +7478,6 @@ SafeInt<T, E> operator|(U lhs, SafeInt<T, E> rhs) SAFEINT_NOTHROW
 #undef C_ASSERT
 #undef C_ASSERT_DEFINED_SAFEINT
 #endif // C_ASSERT_DEFINED_SAFEINT
-
+#pragma pop_macro("assert") // Enable coexists of CRY_ASSERT and generic one
 } // namespace safeint3
 } // namespace msl

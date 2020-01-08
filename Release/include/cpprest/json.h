@@ -1324,7 +1324,7 @@ public:
             case json::number::type::unsigned_type: return m_uintval == other.m_uintval;
             case json::number::type::double_type: return m_value == other.m_value;
         }
-        __assume(0);
+        __cpprest_assume(0);
         // Absence of this return statement provokes a warning from Intel
         // compiler, but its presence results in a warning from MSVC, so
         // we have to resort to conditional compilation to keep both happy.

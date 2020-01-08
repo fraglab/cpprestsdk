@@ -311,8 +311,8 @@ public:
     _ASYNCRTIMP ~scoped_c_thread_locale();
 
 #if !defined(ANDROID) && !defined(__ANDROID__) // CodePlex 269
-#if defined(ORBIS)
-        typedef void* locale_t ;
+#if defined(AZ_PLATFORM_PROVO)
+    typedef void* locale_t;
 #endif
 #ifdef _WIN32
     typedef _locale_t xplat_locale;
