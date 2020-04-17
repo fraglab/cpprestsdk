@@ -105,7 +105,7 @@ _ASYNCRTIMP void __cdecl inplace_tolower(std::wstring& target) CPPREST_NOEXCEPT
     }
 }
 
-#if !defined(ANDROID) && !defined(__ANDROID__)
+#if !defined(ANDROID) && !defined(__ANDROID__) && !defined(AZ_PLATFORM_PROVO)
 std::once_flag g_c_localeFlag;
 std::unique_ptr<scoped_c_thread_locale::xplat_locale, void (*)(scoped_c_thread_locale::xplat_locale*)> g_c_locale(
     nullptr, [](scoped_c_thread_locale::xplat_locale*) {});
@@ -176,7 +176,7 @@ scoped_c_thread_locale::~scoped_c_thread_locale()
         _configthreadlocale(m_prevThreadSetting);
     }
 }
-#elif (defined(ANDROID) || defined(__ANDROID__))
+#elif (defined(ANDROID) || defined(__ANDROID__) || defined(AZ_PLATFORM_PROVO))
 scoped_c_thread_locale::scoped_c_thread_locale() {}
 scoped_c_thread_locale::~scoped_c_thread_locale() {}
 #else
@@ -274,7 +274,7 @@ std::error_condition windows_category_impl::default_error_condition(int errorCod
 
     switch (errorCode)
     {
-#ifndef __cplusplus_winrt
+#if !defined(__cplusplus_winrt) && !defined(AZ_PLATFORM_XENIA) // FL[FD-4905]: SPIKE: compile game01 on Durango platform
         case ERROR_WINHTTP_TIMEOUT: return std::errc::timed_out;
         case ERROR_WINHTTP_CANNOT_CONNECT: return std::errc::host_unreachable;
         case ERROR_WINHTTP_CONNECTION_ERROR: return std::errc::connection_aborted;

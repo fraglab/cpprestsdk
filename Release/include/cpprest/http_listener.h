@@ -17,7 +17,7 @@
 #include <functional>
 #include <limits>
 #if !defined(_WIN32) && !defined(__cplusplus_winrt) || defined(CPPREST_FORCE_HTTP_LISTENER_ASIO)
-#include <boost/asio/ssl.hpp>
+#include "cpprest/details/asio_ssl.h"
 #endif
 
 #if !defined(_WIN32) || (_WIN32_WINNT >= _WIN32_WINNT_VISTA && !defined(__cplusplus_winrt)) ||                         \
@@ -135,7 +135,7 @@ public:
     /// Get the callback of ssl context
     /// </summary>
     /// <returns>The function defined by the user of http_listener_config to configure a ssl context.</returns>
-    const std::function<void(boost::asio::ssl::context&)>& get_ssl_context_callback() const
+    const std::function<void(web::lib::asio::ssl::context&)>& get_ssl_context_callback() const
     {
         return m_ssl_context_callback;
     }
@@ -145,7 +145,7 @@ public:
     /// </summary>
     /// <param name="ssl_context_callback">The function to configure a ssl context which will setup https
     /// connections.</param>
-    void set_ssl_context_callback(const std::function<void(boost::asio::ssl::context&)>& ssl_context_callback)
+    void set_ssl_context_callback(const std::function<void(web::lib::asio::ssl::context&)>& ssl_context_callback)
     {
         m_ssl_context_callback = ssl_context_callback;
     }
@@ -155,7 +155,7 @@ private:
     utility::seconds m_timeout;
     int m_backlog;
 #if !defined(_WIN32) || defined(CPPREST_FORCE_HTTP_LISTENER_ASIO)
-    std::function<void(boost::asio::ssl::context&)> m_ssl_context_callback;
+    std::function<void(web::lib::asio::ssl::context&)> m_ssl_context_callback;
 #endif
 };
 
