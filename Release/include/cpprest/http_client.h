@@ -107,6 +107,7 @@ public:
 #if !defined(AZ_PLATFORM_PROVO)
         , m_tlsext_sni_enabled(true)
 #endif
+#endif
 #if (defined(_WIN32) && !defined(__cplusplus_winrt)) || defined(CPPREST_FORCE_HTTP_CLIENT_WINHTTPPAL)
         , m_buffer_request(false)
 #endif
@@ -394,6 +395,7 @@ private:
 #if !defined(AZ_PLATFORM_PROVO)
     std::function<void(web::lib::asio::ssl::context&)> m_ssl_context_callback;
     bool m_tlsext_sni_enabled;
+#endif
 #endif
 #if (defined(_WIN32) && !defined(__cplusplus_winrt)) || defined(CPPREST_FORCE_HTTP_CLIENT_WINHTTPPAL)
     bool m_buffer_request;
