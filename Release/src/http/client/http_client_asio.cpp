@@ -332,7 +332,7 @@ public:
     void enable_no_delay()
     {
         lib::asio::ip::tcp::no_delay option(true);
-        lib::system::error_code error_ignored;
+        lib::asio::error_code error_ignored;
         m_socket.set_option(option, error_ignored);
     }
 
