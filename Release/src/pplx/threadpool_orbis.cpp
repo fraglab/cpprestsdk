@@ -1,7 +1,8 @@
 #include <pplx/threadpool_orbis.h>
 
-//#include <memory>
 #include <functional>
+
+#define ORBIS_THREAD_POOL_SIZE 4
 
 namespace crossplat
 {
@@ -47,7 +48,7 @@ namespace crossplat
 
     _ASYNCRTIMP threadpool_orbis& threadpool_orbis::shared_instance()
     {
-        return *initialize_shared_threadpool(20).second;
+        return *initialize_shared_threadpool(ORBIS_THREAD_POOL_SIZE).second;
     }
 
     _ASYNCRTIMP std::unique_ptr<threadpool_orbis> __cdecl threadpool_orbis::construct(size_t num_threads)

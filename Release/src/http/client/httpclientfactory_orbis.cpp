@@ -1,3 +1,5 @@
+// Copyright 2020 FragLab Ltd. All rights reserved.
+
 #include "httpclientfactory_orbis.h"
 
 // PS4 specific headers
@@ -6,9 +8,9 @@
 #include <scebase.h>
 #include <libssl.h>
 
-#define SSL_POOL_SIZE  (10 * 1024 * 1024U)
+#define SSL_POOL_SIZE    (10 * 1024 * 1024U)
 #define LIBHTTP_POOLSIZE (10 * 1024 * 1024)
-#define NET_POOL_SIZE (10 * 1024 * 1024)
+#define NET_POOL_SIZE    (10 * 1024 * 1024)
 
 namespace web
 {

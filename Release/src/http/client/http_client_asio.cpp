@@ -331,7 +331,7 @@ public:
 
     void enable_no_delay()
     {
-        boost::asio::ip::tcp::no_delay option(true);
+        lib::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
     }
 

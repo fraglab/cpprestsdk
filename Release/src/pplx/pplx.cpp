@@ -13,8 +13,6 @@
 
 #include "stdafx.h"
 
-#if !defined(AZ_PLATFORM_PROVO)
-
 #if !defined(_WIN32) || CPPREST_FORCE_PPLX
 #include "pplx/pplx.h"
 #include <atomic>
@@ -127,5 +125,4 @@ _PPLXIMP void _pplx_cdecl set_ambient_scheduler(std::shared_ptr<pplx::scheduler_
 
 } // namespace pplx
 
-#endif
 #endif

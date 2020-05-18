@@ -441,8 +441,8 @@ void hostport_listener::start()
     tcp::resolver resolver(service);
     // #446: boost resolver does not recognize "+" as a host wildchar
     tcp::resolver::query query =
-        ("+" == m_host) ? tcp::resolver::query(m_port, boost::asio::ip::resolver_query_base::flags())
-                        : tcp::resolver::query(m_host, m_port, boost::asio::ip::resolver_query_base::flags());
+        ("+" == m_host) ? tcp::resolver::query(m_port, lib::asio::ip::resolver_query_base::flags())
+                        : tcp::resolver::query(m_host, m_port, lib::asio::ip::resolver_query_base::flags());
 
     tcp::endpoint endpoint = *resolver.resolve(query);
 
@@ -513,7 +513,7 @@ void hostport_listener::on_accept(std::unique_ptr<ip::tcp::socket> socket, const
     // Handle successful accept
     if (!ec)
     {
-        boost::asio::ip::tcp::no_delay option(true);
+        lib::asio::ip::tcp::no_delay option(true);
         socket->set_option(option);
 
         auto conn = asio_server_connection::create(std::move(socket), m_p_server, this);

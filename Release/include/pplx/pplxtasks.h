@@ -3969,7 +3969,7 @@ private:
         void _Continue(std::false_type, details::_TypeSelectorNoAsync) const
         {
             this->_M_pTask->_FinalizeAndRunContinuations(_LogWorkItemAndInvokeUserLambda(
-                _Continuation_func_transformer<_InternalReturnType, _ContinuationReturnType>::_Perform(_M_function),
+                _Continuation_func_transformer<_InternalReturnType, _ContinuationReturnType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                 _M_ancestorTaskImpl->_GetResult()));
         }
 
@@ -3988,7 +3988,7 @@ private:
             details::_Task_impl_base::_AsyncInit<_NormalizedContinuationReturnType, _ContinuationReturnType>(
                 this->_M_pTask,
                 _LogWorkItemAndInvokeUserLambda(
-                    _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(_M_function),
+                    _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                     _M_ancestorTaskImpl->_GetResult()));
         }
 
@@ -4005,7 +4005,7 @@ private:
             details::_Task_impl_base::_AsyncInit<_NormalizedContinuationReturnType, _ContinuationReturnType>(
                 this->_M_pTask,
                 ref new details::_IAsyncActionToAsyncOperationConverter(_LogWorkItemAndInvokeUserLambda(
-                    _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(_M_function),
+                    _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                     _M_ancestorTaskImpl->_GetResult())));
         }
 
@@ -4020,7 +4020,7 @@ private:
             typedef details::_FunctionTypeTraits<_Function, _InternalReturnType>::_FuncRetType _FuncOutputType;
 
             auto _OpWithProgress = _LogWorkItemAndInvokeUserLambda(
-                _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(_M_function),
+                _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                 _M_ancestorTaskImpl->_GetResult());
             typedef details::_GetProgressType<decltype(_OpWithProgress)>::_Value _ProgressType;
 
@@ -4041,7 +4041,7 @@ private:
             typedef details::_FunctionTypeTraits<_Function, _InternalReturnType>::_FuncRetType _FuncOutputType;
 
             auto _OpWithProgress = _LogWorkItemAndInvokeUserLambda(
-                _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(_M_function),
+                _Continuation_func_transformer<_InternalReturnType, _FuncOutputType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                 _M_ancestorTaskImpl->_GetResult());
             typedef details::_GetProgressType<decltype(_OpWithProgress)>::_Value _ProgressType;
 
@@ -4063,7 +4063,7 @@ private:
             task<_InternalReturnType> _ResultTask;
             _ResultTask._SetImpl(std::move(_M_ancestorTaskImpl));
             this->_M_pTask->_FinalizeAndRunContinuations(_LogWorkItemAndInvokeUserLambda(
-                _Continuation_func_transformer<_FuncInputType, _ContinuationReturnType>::_Perform(_M_function),
+                _Continuation_func_transformer<_FuncInputType, _ContinuationReturnType>::_Perform(const_cast<_ContinuationTaskHandle*>(this)->_M_function), // FL[FD-12916] Lumberyard 1.23 integration: fix for latest Provo SDK
                 std::move(_ResultTask)));
         }
 

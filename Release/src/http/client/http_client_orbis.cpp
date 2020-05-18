@@ -1,3 +1,5 @@
+// Copyright 2020 FragLab Ltd. All rights reserved.
+
 #include "stdafx.h"
 
 #include "cpprest/http_headers.h"
@@ -35,9 +37,10 @@ namespace web::http::client::details
         }
 
     public:
-        int m_sceHttpTemplateId{ -1 };
-        int m_sceConnectionId{ -1 };
-        int m_sceRequestId{ -1 };
+        int m_sceHttpTemplateId { -1 };
+        int m_sceConnectionId { -1 };
+        int m_sceRequestId { -1 };
+        SceHttpEpollHandle m_sceEpollHandle { nullptr };
     };
 
     // OrbisHTTP client.
@@ -101,7 +104,7 @@ namespace web::http::client::details
             }
             orbis_context->m_sceConnectionId = ret;
 
-            ret = setup_request(orbis_context);
+            ret = setup_request(orbis_context, clientFactory);
             if (ret < 0)
             {
                 close_connection(orbis_context, clientFactory);
@@ -116,7 +119,7 @@ namespace web::http::client::details
             send_request_and_payload(orbis_context, get_request_body_size(request));
 
             int statusCode = 0;
-            int statusReturn = sceHttpGetStatusCode(orbis_context->m_sceRequestId, &statusCode);
+            int statusReturn = wait_response_statuscode(orbis_context, statusCode);
             if (statusReturn < 0)
             {
                 close_connection(orbis_context, clientFactory);
@@ -132,7 +135,7 @@ namespace web::http::client::details
 
             request->complete_request(body_size);
             request->complete_headers();
-        };
+        }
 
     private:
         int open_connection(_In_ const std::shared_ptr<orbishttp_request_context>& request, HttpClientFactory_orbis& clientFactory)
@@ -149,23 +152,50 @@ namespace web::http::client::details
         {
             if (request->m_sceRequestId > 0)
             {
+                sceHttpUnsetEpoll(request->m_sceRequestId);
                 sceHttpDeleteRequest(request->m_sceRequestId);
+                sceHttpDestroyEpoll(clientFactory.GetHttpCtxId(), request->m_sceEpollHandle);
             }
 
             int ret = clientFactory.CloseConnection(request->m_sceConnectionId);
             sceHttpDeleteTemplate(request->m_sceHttpTemplateId);
         }
 
-        int setup_request(_In_ const std::shared_ptr<orbishttp_request_context>& request)
+        int setup_request(_In_ const std::shared_ptr<orbishttp_request_context>& request, HttpClientFactory_orbis& clientFactory)
         {
+            int ret;
+            ret = sceHttpSetNonblock(request->m_sceHttpTemplateId, SCE_TRUE);
+            if (ret < 0)
+            {
+                request->report_error(ret, _XPLATSTR("sceHttpSetNonblock()"));
+                return ret;
+            }
+
+            ret = sceHttpCreateEpoll(clientFactory.GetHttpCtxId(), &request->m_sceEpollHandle);
+            if (ret < 0)
+            {
+                request->report_error(ret, _XPLATSTR("sceHttpCreateEpoll()"));
+                return ret;
+            }
+
             http_request& msg = request->m_request;
             const utility::string_t encoded_resource =
                 http::uri_builder(m_uri).append(msg.relative_uri()).to_uri().to_string();
 
-            int ret = sceHttpCreateRequestWithURL2(request->m_sceConnectionId,
-                request->m_request.method().c_str(), encoded_resource.c_str(), 0);
+            int reqId = sceHttpCreateRequestWithURL2(request->m_sceConnectionId,
+                                                     request->m_request.method().c_str(), encoded_resource.c_str(), 0);
 
-            return ret;
+            if (reqId > 0)
+            {
+                ret = sceHttpSetEpoll(reqId, request->m_sceEpollHandle, NULL);
+                if (ret < 0)
+                {
+                    request->report_error(ret, _XPLATSTR("sceHttpSetEpoll()"));
+                    return ret;
+                }
+            }
+
+            return reqId;
         }
 
         void setup_request_header(_In_ const std::shared_ptr<orbishttp_request_context>& request)
@@ -222,7 +252,7 @@ namespace web::http::client::details
                             if (rbuf.exception() == nullptr)
                             {
                                 request->report_error(errno,
-                                    _XPLATSTR("Error reading outgoing HTTP body from its stream."));
+                                                      _XPLATSTR("Error reading outgoing HTTP body from its stream."));
                             }
                             else
                             {
@@ -255,6 +285,52 @@ namespace web::http::client::details
             }
         }
 
+        int wait_response_statuscode(_In_ const std::shared_ptr<orbishttp_request_context>& request, int32_t& statusCode)
+        {
+            SceHttpNBEvent nbEvent;
+            int ret = 0;
+
+            memset(&nbEvent, 0x00, sizeof(nbEvent));
+            do
+            {
+                ret = sceHttpGetStatusCode(request->m_sceRequestId, &statusCode);
+                if (ret < 0)
+                {
+                    if (ret != SCE_HTTP_ERROR_EAGAIN)
+                    {
+                        request->report_error(ret, _XPLATSTR("sceHttpGetStatusCode()"));
+                        return ret;
+                    }
+                }
+                else
+                {
+                    return ret;
+                }
+
+                do
+                {
+                    ret = sceHttpWaitRequest(request->m_sceEpollHandle, &nbEvent, 1, 1000ull);
+                    if (ret > 0 && nbEvent.id == request->m_sceRequestId)
+                    {
+                        if (nbEvent.events &
+                            (SCE_HTTP_NB_EVENT_SOCK_ERR | SCE_HTTP_NB_EVENT_HUP | SCE_HTTP_NB_EVENT_RESOLVER_ERR))
+                        {
+                            //printf("error or terminated request \n");
+                            request->report_error(ret, _XPLATSTR("error or terminated request"));
+                            return ret;
+                        }
+                    }
+                    if (ret < 0)
+                    {
+                        request->report_error(ret, _XPLATSTR("sceHttpWaitRequest()"));
+                        return ret;
+                    }
+                    scePthreadYield();
+                }
+                while (ret == 0);
+            }
+            while (true);
+        }
 
         int read_response_header(_In_ const std::shared_ptr<orbishttp_request_context>& request)
         {
@@ -267,25 +343,31 @@ namespace web::http::client::details
                 return ret;
             }
 
-            auto& response = request->m_response;
-            http_headers& requestHeaders = response.headers();
+            std::string header = dataStr;
+            http_headers& requestHeaders = request->m_response.headers();
 
-            char* token = strtok(dataStr, "\n");
-            while (token != nullptr)
+            std::string::size_type startKey = 0;
+            std::string::size_type startValue = 0;
+
+            while ((startValue = header.find(':', startValue)) != std::string::npos)
             {
-                std::string header = token;
-            std:size_t pos = header.find(':');
-                if (pos != std::string::npos)
+                std::string::size_type endLine = header.find('\n', startKey + 1);
+                if (endLine != std::string::npos && endLine < startValue)
                 {
-                    std::string headerName = header.substr(0, pos);
-                    std::string headerValue = header.substr(pos + 1, header.size() - pos);
-
-                    web::lib::algorithm::trim(headerName);
-                    web::lib::algorithm::trim(headerValue);
-
-                    requestHeaders.add(headerName, headerValue);
+                    startKey = endLine;
+                    endLine = header.find('\n', startKey + 1);
                 }
-                token = strtok(NULL, "\n");
+
+                std::string key = header.substr(startKey + 1, startValue - startKey - 1);
+                std::string value = header.substr(startValue + 1, endLine - startValue - 1);
+
+                web::lib::algorithm::trim(key);
+                web::lib::algorithm::trim(value);
+
+                requestHeaders.add(key, value);
+
+                startKey = endLine;
+                startValue = endLine;
             }
 
             return ret;
@@ -293,7 +375,7 @@ namespace web::http::client::details
 
         int read_response_body(_In_ const std::shared_ptr<orbishttp_request_context>& request)
         {
-            uint64_t    contentLength = 0;
+            uint64_t contentLength = 0;
 
             uint64_t chunksize = request->m_http_client->client_config().chunksize();
 
