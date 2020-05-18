@@ -2145,7 +2145,8 @@ private:
 
                 // Now allocate buffer for headers and query for them.
                 std::vector<unsigned char> header_raw_buffer;
-                header_raw_buffer.resize(headerBufferLength);
+                header_raw_buffer.resize(headerBufferLength + sizeof(utility::char_t));
+		memset(&header_raw_buffer[0], 0, sizeof(header_raw_buffer[0]) * header_raw_buffer.size());
                 utility::char_t* header_buffer = reinterpret_cast<utility::char_t*>(&header_raw_buffer[0]);
                 if (!WinHttpQueryHeaders(hRequestHandle,
                                          WINHTTP_QUERY_RAW_HEADERS_CRLF,

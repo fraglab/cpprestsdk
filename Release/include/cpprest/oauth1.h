@@ -557,10 +557,12 @@ public:
 
     virtual pplx::task<http_response> propagate(http_request request) override
     {
+#if !defined(AZ_PLATFORM_PROVO)
         if (m_config)
         {
             m_config->_authenticate_request(request);
         }
+#endif
         return next_stage()->propagate(request);
     }
 
